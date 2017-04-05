@@ -8,6 +8,9 @@ import (
 	"time"
 	"bytes"
 	"os/exec"
+	"net/url"
+	"strings"
+	"strconv"
 )
 
 type jobDefinition struct {
@@ -56,6 +59,7 @@ func readFiles() (jobs map[string][]jobDefinition) {
 	jobs = make(map[string][]jobDefinition)
 	deployEnv := os.Getenv("DEPLOY_ENV")
 	files, _ := ioutil.ReadDir("/mnt")
+	OUTER:
 	for _, f := range files {
 		if f.IsDir() {
 			cronFileName := fmt.Sprintf("/mnt/%v/code/live/cron/%v.cron", f.Name(), deployEnv)
@@ -72,9 +76,60 @@ func readFiles() (jobs map[string][]jobDefinition) {
 					fmt.Printf("File format error: %v %v\n", cronFileName, err)
 					continue
 				}
+				for i, line := range thisSiteJobs{
+					_, err := url.Parse(line.Url)
+					if err != nil {
+						fmt.Printf("Line %v of %v has invalid URL\n", i, cronFileName)
+						continue OUTER
+					}
+					if valid,err := scheduleValid(line.Schedule); !valid{
+						fmt.Printf("Line %v of %v: %v\n", i, cronFileName, err)
+						continue OUTER
+					}
+				}
 				jobs[f.Name()] = thisSiteJobs
 			}
 		}
 	}
+	return
+}
+
+func scheduleValid (schedule string) (valid bool, err string){
+	scheduleArr := strings.Split(schedule, " ")
+	if len(schedule) != 5 {
+		valid = false
+		err := "Schedule does not contain 5 parts"
+	}
+	for i, value := range scheduleArr {
+		if value == "*"{
+			continue
+		}
+		ival, err := strconv.Atoi(value)
+		if err != nil{
+			valid = false
+			err = fmt.Sprintf("Element #%v of schedule is invalid", i)
+			return
+		}
+		var thisValid bool
+		switch (i){
+		case 0:
+			thisValid = ival >=0 && ival <=59
+		case 1:
+			thisValid = ival >=0 && ival <=23
+		case 2:
+			thisValid = ival >=1 && ival <=31
+		case 3:
+			thisValid = ival >=1 && ival <=12
+		case 4:
+			thisValid = ival >=0 && ival <=6
+		}
+
+		if !thisValid {
+			valid = false
+			err = fmt.Sprintf("Element #%v of schedule is invalid", i)
+			return
+		}
+	}
+	valid = true
 	return
 }
