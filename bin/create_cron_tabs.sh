@@ -3,23 +3,25 @@ set -e
 
 (
     flock -x -n 200 || exit 1
-    sleep 5 #Wait to make sure everything is done moving
+
+    now=`date`
 
     has_crontabs=false
     > /etc/crontabs/milo
     for i in /mnt/* ; do
       if [ -f "${i}/live/cron/${DEPLOY_ENV}.cron" ]; then
         has_crontabs=true
-        echo "### $(basename \"$i\") ###" >> /etc/crontabs/milo;
+        echo "### $(basename $i) ###" >> /etc/crontabs/milo;
         cat ${i}/live/cron/${DEPLOY_ENV}.cron >> /etc/crontabs/milo;
-        echo "Added ${i}/live/cron/${DEPLOY_ENV}.cron";
+        echo "${now} - Added ${i}/live/cron/${DEPLOY_ENV}.cron";
       fi
     done;
 
     if [ "${has_crontabs}" = true ] ; then
-        crontab /etc/crontabs/milo;
-        echo "Reloaded Crontabs";
-    else
-        echo "No Crontabs Found";
+        if ! cmp /etc/crontabs/milo /etc/crontabs/root >/dev/null 2>&1
+        then
+            crontab /etc/crontabs/milo;
+            echo "${now} - Reloaded Crontabs";
+        fi
     fi
 ) 200>/var/lock/.crongen.exclusivelock

@@ -3,7 +3,6 @@ FROM alpine
 RUN apk add --update \
 		curl \
 		tini \
-		inotify-tools \
 	&& rm -rf /var/cache/apk/*
 
 
