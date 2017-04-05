@@ -7,4 +7,4 @@ RUN apk add --update \
 ADD ./tmp/cron-runner /app/
 ADD ./bin/entrypoint.sh /
 
-CMD ["/app/cron-runner"]
+CMD ["/entrypoint.sh"]

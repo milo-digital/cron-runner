@@ -1,7 +1,5 @@
 #!/bin/sh
 
 set -e
-
-/app/cron-runner &
-
-/usr/sbin/crond -f
+/usr/sbin/crond
+/app/cron-runner
