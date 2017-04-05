@@ -1,5 +1,5 @@
 #!/bin/bash
 echo "=> Building the binary"
 
-docker build -t buildStep -f docker/Dockerfile .
+docker build -t buildStep -f Dockerfile .
 docker run -v ./tmp:/tmp buildStep
