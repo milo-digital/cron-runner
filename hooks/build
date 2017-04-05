@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# DOCKERCLOUD RUNS THIS FILE UPON BRANCH DEPLOYMENT
+
+docker build -t buildStep -f docker/Dockerfile .
+docker run -v ./tmp:/tmp buildStep
+docker build -t $IMAGE_NAME -f docker/Dockerfile.dist .

@@ -1,0 +1,9 @@
+FROM alpine
+
+RUN apk add --update \
+		curl \
+	&& rm -rf /var/cache/apk/*
+
+ADD ./tmp/cron-runner /app/
+
+CMD ["/app/cron-runner"]

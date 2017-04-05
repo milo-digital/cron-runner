@@ -1,12 +1,8 @@
-FROM alpine
+FROM golang
 
-RUN apk add --update \
-		curl \
-		tini \
-	&& rm -rf /var/cache/apk/*
+MAINTAINER Justin Kiang <justin@bringhub.com>
 
+ADD . /go/src/github.com/milodigital/cron-runner
+WORKDIR /go/src/github.com/milodigital/cron-runner
 
-COPY . /opt/cronrunner/
-
-ENTRYPOINT ["/sbin/tini", "--"]
-CMD ["/opt/cronrunner/bin/entrypoint.sh", "crond", "-f"]
+CMD CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o /tmp/cron-runner
