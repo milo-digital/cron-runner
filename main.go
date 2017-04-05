@@ -53,8 +53,11 @@ func readFiles() (jobs map[string][]jobDefinition) {
 	deployEnv := os.Getenv("DEPLOY_ENV")
 	files, _ := ioutil.ReadDir("/mnt")
 	for _, f := range files {
+		fmt.Println(f.Name())
+
 		if f.IsDir() {
 			cronFileName := fmt.Sprintf("/mnt/%v/code/live/cron/%v.cron", f.Name(), deployEnv)
+			fmt.Println(cronFileName)
 			if _, err := os.Stat(cronFileName); err == nil {
 
 				file, e := ioutil.ReadFile(cronFileName)
