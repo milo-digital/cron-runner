@@ -41,14 +41,14 @@ func process() {
 
 	newFile, _ := ioutil.ReadFile("/tmp/cron")
 	existing, err := ioutil.ReadFile("/etc/crontabs/root")
-	if err != nil || ! bytes.Equal(newFile, existing) {
+	if err != nil || !bytes.Equal(newFile, existing) {
 		exec.Command("crontab", "/tmp/cron")
-		os.Remove("/tmp/cron")
+		//os.Remove("/tmp/cron")
 	}
 }
 
 func readFiles() (jobs map[string][]jobDefinition) {
-	fmt.Printf("Polling at %s", time.Now())
+	fmt.Printf("Polling at %s\n", time.Now())
 	jobs = make(map[string][]jobDefinition)
 	deployEnv := os.Getenv("DEPLOY_ENV")
 	files, _ := ioutil.ReadDir("/mnt")
@@ -65,7 +65,7 @@ func readFiles() (jobs map[string][]jobDefinition) {
 				var thisSiteJobs []jobDefinition
 				err := json.Unmarshal(file, &thisSiteJobs)
 				if err != nil {
-					fmt.Printf("File format error: %v %v\n", cronFileName, e)
+					fmt.Printf("File format error: %v %v\n", cronFileName, err)
 					continue
 				}
 				jobs[f.Name()] = thisSiteJobs
