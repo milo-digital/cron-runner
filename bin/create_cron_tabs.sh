@@ -9,11 +9,11 @@ set -e
     has_crontabs=false
     > /etc/crontabs/milo
     for i in /mnt/* ; do
-      if [ -f "${i}/live/cron/${DEPLOY_ENV}.cron" ]; then
+      if [ -f "${i}/code/live/cron/${DEPLOY_ENV}.cron" ]; then
         has_crontabs=true
         echo "### $(basename $i) ###" >> /etc/crontabs/milo;
-        cat ${i}/live/cron/${DEPLOY_ENV}.cron >> /etc/crontabs/milo;
-        echo "${now} - Added ${i}/live/cron/${DEPLOY_ENV}.cron";
+        cat ${i}/code/live/cron/${DEPLOY_ENV}.cron >> /etc/crontabs/milo;
+        echo "${now} - Added ${i}/code/live/cron/${DEPLOY_ENV}.cron";
       fi
     done;
 
