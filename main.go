@@ -42,7 +42,11 @@ func process() {
 	newFile, _ := ioutil.ReadFile("/tmp/cron")
 	existing, err := ioutil.ReadFile("/etc/crontabs/root")
 	if err != nil || !bytes.Equal(newFile, existing) {
-		exec.Command("crontab", "/tmp/cron")
+		ret := exec.Command("crontab", "/tmp/cron")
+		err = ret.Run()
+		if err != nil {
+			fmt.Println(err)
+		}
 		//os.Remove("/tmp/cron")
 	}
 }
