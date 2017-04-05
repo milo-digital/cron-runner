@@ -98,7 +98,8 @@ func scheduleValid (schedule string) (valid bool, errMsg string){
 	scheduleArr := strings.Split(schedule, " ")
 	if len(schedule) != 5 {
 		valid = false
-		err := "Schedule does not contain 5 parts"
+		errMsg = "Schedule does not contain 5 parts"
+		return
 	}
 	for i, value := range scheduleArr {
 		if value == "*"{
