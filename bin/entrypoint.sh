@@ -2,5 +2,6 @@
 
 set -e
 
-/usr/sbin/crond
-/app/cron-runner
+/app/cron-runner &
+
+/usr/sbin/crond -f
