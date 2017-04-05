@@ -2,8 +2,5 @@
 
 set -e
 
-/opt/cronrunner/bin/create_cron_tabs.sh
-
-/opt/cronrunner/bin/watch.sh &
-
-exec "$@"
+/usr/sbin/crond
+/app/cron-runner

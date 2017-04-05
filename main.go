@@ -20,7 +20,6 @@ type jobDefinition struct {
 
 
 func main() {
-	exec.Command("crond")
 	process()
 	c := time.Tick(60 * time.Second)
 	for range c {
