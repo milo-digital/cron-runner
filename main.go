@@ -20,6 +20,7 @@ type jobDefinition struct {
 
 
 func main() {
+	exec.Command("crond")
 	process()
 	c := time.Tick(60 * time.Second)
 	for range c {
@@ -50,8 +51,8 @@ func process() {
 		if err != nil {
 			fmt.Println(err)
 		}
-		//os.Remove("/tmp/cron")
 	}
+	os.Remove("/tmp/cron")
 }
 
 func readFiles() (jobs map[string][]jobDefinition) {
