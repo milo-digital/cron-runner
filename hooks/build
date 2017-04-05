@@ -2,4 +2,4 @@
 
 # DOCKERCLOUD RUNS THIS FILE UPON BRANCH DEPLOYMENT
 
-docker build -t $IMAGE_NAME -f docker/Dockerfile.dist .
+docker build -t $IMAGE_NAME -f Dockerfile.dist .
