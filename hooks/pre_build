@@ -2,4 +2,4 @@
 echo "=> Building the binary"
 
 docker build -t build_step  .
-docker run -v ./tmp:/tmp buildStep
+docker run -v ./tmp:/tmp build_step
