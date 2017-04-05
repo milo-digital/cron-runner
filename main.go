@@ -94,7 +94,7 @@ func readFiles() (jobs map[string][]jobDefinition) {
 	return
 }
 
-func scheduleValid (schedule string) (valid bool, err string){
+func scheduleValid (schedule string) (valid bool, errMsg string){
 	scheduleArr := strings.Split(schedule, " ")
 	if len(schedule) != 5 {
 		valid = false
@@ -107,7 +107,7 @@ func scheduleValid (schedule string) (valid bool, err string){
 		ival, err := strconv.Atoi(value)
 		if err != nil{
 			valid = false
-			err = fmt.Sprintf("Element #%v of schedule is invalid", i)
+			errMsg = fmt.Sprintf("Element #%v of schedule is invalid", i)
 			return
 		}
 		var thisValid bool
@@ -126,7 +126,7 @@ func scheduleValid (schedule string) (valid bool, err string){
 
 		if !thisValid {
 			valid = false
-			err = fmt.Sprintf("Element #%v of schedule is invalid", i)
+			errMsg = fmt.Sprintf("Element #%v of schedule is invalid", i)
 			return
 		}
 	}
