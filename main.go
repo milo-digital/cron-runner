@@ -96,8 +96,9 @@ func readFiles() (jobs map[string][]jobDefinition) {
 
 func scheduleValid (schedule string) (valid bool, errMsg string){
 	scheduleArr := strings.Split(schedule, " ")
-	if len(schedule) != 5 {
+	if len(scheduleArr) != 5 {
 		valid = false
+		fmt.Println(scheduleArr)
 		errMsg = "Schedule does not contain 5 parts"
 		return
 	}
