@@ -29,7 +29,6 @@ func process() {
 	f, _ := os.OpenFile("/tmp/cron", os.O_WRONLY|os.O_CREATE, 0666)
 
 	jobsMap := readFiles()
-	fmt.Println(jobsMap)
 	for siteName,jobs := range jobsMap {
 		f.WriteString(fmt.Sprintf("### %s ###\n", siteName))
 		for _, job := range jobs {
@@ -49,25 +48,24 @@ func process() {
 }
 
 func readFiles() (jobs map[string][]jobDefinition) {
+	fmt.Printf("Polling at %s", time.Now())
 	jobs = make(map[string][]jobDefinition)
 	deployEnv := os.Getenv("DEPLOY_ENV")
 	files, _ := ioutil.ReadDir("/mnt")
 	for _, f := range files {
-		fmt.Println(f.Name())
-
 		if f.IsDir() {
 			cronFileName := fmt.Sprintf("/mnt/%v/code/live/cron/%v.cron", f.Name(), deployEnv)
-			fmt.Println(cronFileName)
 			if _, err := os.Stat(cronFileName); err == nil {
-
+				fmt.Printf("Processing file: %v\n", cronFileName)
 				file, e := ioutil.ReadFile(cronFileName)
 				if e != nil {
-					fmt.Printf("File error: %v\n", e)
-					os.Exit(1)
+					fmt.Printf("File read error: %v\n", e)
+					continue
 				}
 				var thisSiteJobs []jobDefinition
 				err := json.Unmarshal(file, &thisSiteJobs)
 				if err != nil {
+					fmt.Printf("File format error: %v %v\n", cronFileName, e)
 					continue
 				}
 				jobs[f.Name()] = thisSiteJobs
