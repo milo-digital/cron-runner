@@ -118,31 +118,66 @@ func scheduleValid (schedule string) (valid bool, errMsg string){
 		if value == "*"{
 			continue
 		}
-		ival, err := strconv.Atoi(value)
-		if err != nil{
-			valid = false
-			errMsg = fmt.Sprintf("Element #%v of schedule is invalid", i)
-			return
-		}
-		var thisValid bool
-		switch (i){
-		case 0:
-			thisValid = ival >=0 && ival <=59
-		case 1:
-			thisValid = ival >=0 && ival <=23
-		case 2:
-			thisValid = ival >=1 && ival <=31
-		case 3:
-			thisValid = ival >=1 && ival <=12
-		case 4:
-			thisValid = ival >=0 && ival <=6
+		divideSplit := strings.Split(value, "/")
+		if len(divideSplit) > 1{
+			ival, err := strconv.Atoi(divideSplit[1])
+			if err != nil{
+				valid = false
+				errMsg = fmt.Sprintf("Element #%v of schedule is invalid", i)
+				return
+			}
+			if divideSplit[0] != "*" {
+				valid = false
+				errMsg = fmt.Sprintf("Element #%v of schedule is invalid", i)
+				return
+			}
+			var thisValid bool
+			switch (i){
+			case 0:
+				thisValid = ival >=0 && ival <=59
+			case 1:
+				thisValid = ival >=0 && ival <=23
+			case 2:
+				thisValid = ival >=1 && ival <=31
+			case 3:
+				thisValid = ival >=1 && ival <=12
+			case 4:
+				thisValid = ival >=0 && ival <=6
+			}
+			if !thisValid {
+				valid = false
+				errMsg = fmt.Sprintf("Element #%v of schedule is invalid", i)
+				return
+			}
+
+		}else {
+			ival, err := strconv.Atoi(value)
+			if err != nil{
+				valid = false
+				errMsg = fmt.Sprintf("Element #%v of schedule is invalid", i)
+				return
+			}
+			var thisValid bool
+			switch (i){
+			case 0:
+				thisValid = ival >=0 && ival <=59
+			case 1:
+				thisValid = ival >=0 && ival <=23
+			case 2:
+				thisValid = ival >=1 && ival <=31
+			case 3:
+				thisValid = ival >=1 && ival <=12
+			case 4:
+				thisValid = ival >=0 && ival <=6
+			}
+
+			if !thisValid {
+				valid = false
+				errMsg = fmt.Sprintf("Element #%v of schedule is invalid", i)
+				return
+			}
 		}
 
-		if !thisValid {
-			valid = false
-			errMsg = fmt.Sprintf("Element #%v of schedule is invalid", i)
-			return
-		}
 	}
 	valid = true
 	return
