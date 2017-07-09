@@ -6,5 +6,7 @@ RUN apk add --update \
 
 ADD ./tmp/cron-runner /app/
 ADD ./bin/entrypoint.sh /
+RUN mkdir -p /var/log && touch /var/log/cron.log
+RUN ln -sf /proc/1/fd/1 /var/log/cron.log
 
 CMD ["/entrypoint.sh"]

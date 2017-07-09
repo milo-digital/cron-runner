@@ -35,7 +35,7 @@ func process() {
 	for siteName,jobs := range jobsMap {
 		f.WriteString(fmt.Sprintf("### %s ###\n", siteName))
 		for _, job := range jobs {
-			f.WriteString(fmt.Sprintf("%s curl %s\n", job.Schedule, job.Url))
+			f.WriteString(fmt.Sprintf("%s curl %s  >> /var/log/cron.log 2>&1 \n", job.Schedule, job.Url))
 		}
 		f.WriteString("\n\n")
 
@@ -55,35 +55,47 @@ func process() {
 }
 
 func readFiles() (jobs map[string][]jobDefinition) {
-	fmt.Printf("Polling at %s\n", time.Now())
+	//fmt.Printf("Polling at %s\n", time.Now())
 	jobs = make(map[string][]jobDefinition)
 	deployEnv := os.Getenv("DEPLOY_ENV")
 	files, _ := ioutil.ReadDir("/mnt")
 	OUTER:
 	for _, f := range files {
 		if f.IsDir() {
+			switch deployEnv{
+			case "staging":
+				if !strings.HasPrefix(f.Name(),"staging."){
+					continue
+				}
+			case "prod":
+				if !strings.HasPrefix(f.Name(),"www."){
+					continue
+				}
+			default:
+				continue
+			}
 			cronFileName := fmt.Sprintf("/mnt/%v/code/live/cron/%v.cron", f.Name(), deployEnv)
 			if _, err := os.Stat(cronFileName); err == nil {
-				fmt.Printf("Processing file: %v\n", cronFileName)
+				fmt.Printf("[%v] Processing file: %v\n", time.Now().String(), cronFileName)
 				file, e := ioutil.ReadFile(cronFileName)
 				if e != nil {
-					fmt.Printf("File read error: %v\n", e)
+					fmt.Printf("[%v] File read error: %v\n", time.Now().String(), e)
 					continue
 				}
 				var thisSiteJobs []jobDefinition
 				err := json.Unmarshal(file, &thisSiteJobs)
 				if err != nil {
-					fmt.Printf("File format error: %v %v\n", cronFileName, err)
+					fmt.Printf("[%v] File format error: %v %v\n", time.Now().String(), cronFileName, err)
 					continue
 				}
 				for i, line := range thisSiteJobs{
 					_, err := url.Parse(line.Url)
 					if err != nil {
-						fmt.Printf("Line %v of %v has invalid URL\n", i, cronFileName)
+						fmt.Printf("[%v] Line %v of %v has invalid URL\n", time.Now().String(), i, cronFileName)
 						continue OUTER
 					}
 					if valid,err := scheduleValid(line.Schedule); !valid{
-						fmt.Printf("Line %v of %v: %v\n", i, cronFileName, err)
+						fmt.Printf("[%v] Line %v of %v: %v\n", time.Now().String(), i, cronFileName, err)
 						continue OUTER
 					}
 				}
