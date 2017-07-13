@@ -68,7 +68,7 @@ func readFiles() (jobs map[string][]jobDefinition) {
 					continue
 				}
 			case "master":
-				if !strings.HasPrefix(f.Name(),"www."){
+				if strings.HasPrefix(f.Name(),"staging."){
 					continue
 				}
 			default:
