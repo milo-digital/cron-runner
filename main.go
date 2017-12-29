@@ -64,11 +64,11 @@ func readFiles() (jobs map[string][]jobDefinition) {
 		if f.IsDir() {
 			switch deployEnv{
 			case "staging":
-				if !strings.HasPrefix(f.Name(),"staging."){
+				if (!strings.HasPrefix(f.Name(),"staging.") && !strings.HasPrefix(f.Name(),"staging-")){
 					continue
 				}
 			case "master":
-				if strings.HasPrefix(f.Name(),"staging."){
+				if (strings.HasPrefix(f.Name(),"staging.") || strings.HasPrefix(f.Name(),"staging-")){
 					continue
 				}
 			default:
